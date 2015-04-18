@@ -58,6 +58,8 @@ class ModelGenerator extends Generator
 
         $fillables = [];
         foreach ($ifillables as $name => $fields) {
+            s($name);
+            s($fields);
             if ($fields[2] == 1 /* $isFillable */) {
                 $fillables[] = "'$name'";
             }
@@ -81,7 +83,58 @@ class ModelGenerator extends Generator
             PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $labels) . PHP_EOL . "\t",
             $fillables_);
 
-        return $labels_;
+
+        /* Add relationships */
+        if (!$irelationships = $this->cache->getFields()) {
+            return str_replace('{{relationships}}', '', $this->template);
+        }
+
+        $relationships = [];
+        foreach ($irelationships as $name => $fields) {
+            /* Start from the relationships */
+            for ($i = 3; $i < count($fields); $i++) {
+                foreach (['hm', 'ho', 'btm'] as $query) {
+                    if (substr($fields[$i], 0, strlen($query)) === $query) {
+                        /* Check what type of relationship and prepare function string*/
+                        $relModel = explode(' ', $fields[$i]);
+                        $relModelType = $relModel[0]; /* hm|ho|btm */
+                        $relModelClass = $relModel[1]; /* Relationship Model */
+                        $lcRelModelClass = lcfirst($relModelClass);
+                        switch ($query) {
+                            case 'hm':
+                                $functionString = <<<EOT
+    public function {$lcRelModelClass}()
+    {
+        return \$this->hasMany('{$relModelClass}');
+    }
+EOT;
+                                break;
+                            case 'ho':
+                                $functionString = <<<EOT
+    public function {$lcRelModelClass}()
+    {
+        return \$this->hasOne('{$relModelClass}');
+    }
+EOT;
+                                break;
+                            case 'btm':
+                                $functionString = '';
+                                break;
+                        }
+                        $relationships[] = $functionString;
+                    }
+                    else {
+
+                    }
+                }
+            }
+        }
+
+        $relationships_ = str_replace('{{relationships}}',
+            '' . implode(PHP_EOL . PHP_EOL, $relationships) . PHP_EOL,
+            $labels_);
+
+        return $relationships_;
     }
 
 }

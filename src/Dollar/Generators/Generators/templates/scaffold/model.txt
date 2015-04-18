@@ -8,4 +8,6 @@ class {{className}} extends Eloquent {
 	protected $fillable= array({{fillables}});
 
 	public static $labels = array({{labels}});
+
+	{{relationships}}
 }

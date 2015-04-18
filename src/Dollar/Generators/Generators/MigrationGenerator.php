@@ -214,6 +214,13 @@ class MigrationGenerator extends Generator {
         foreach($fields as &$bit)
         {
             $columnInfo = preg_split('/ ?: ?/', $bit);
+            foreach ($columnInfo as $key => $value) {
+                if (substr($value,0,1)=='&') {
+                    /* Do not include options starting with& in the migration string */
+                    unset ($columnInfo[$key]);
+                }
+            }
+
 
             $bit = new \StdClass;
             $bit->name = array_shift($columnInfo);

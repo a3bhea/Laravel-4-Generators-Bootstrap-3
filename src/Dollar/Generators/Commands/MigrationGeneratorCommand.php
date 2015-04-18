@@ -31,7 +31,7 @@ class MigrationGeneratorCommand extends BaseGeneratorCommand
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param MigrationGenerator $generator
      */
     public function __construct(MigrationGenerator $generator)
     {
@@ -50,6 +50,7 @@ class MigrationGeneratorCommand extends BaseGeneratorCommand
         $name = $this->argument('name');
         $path = $this->getPath();
         $fields = $this->option('fields');
+//        s($fields); /*<pre>string (50) "name:string:Name mcjjee:1:ho User:hm Accommodation"</pre>*/
 
         $created = $this->generator
                         ->parse($name, $fields)

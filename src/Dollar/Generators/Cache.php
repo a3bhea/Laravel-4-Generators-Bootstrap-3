@@ -53,12 +53,17 @@ class Cache
         $fields = preg_split('/, ?/', $fields);
         $arrayFields = array();
 
-        foreach ($fields as $pair) {
-            list($key, $val, $label, $isFillable) = preg_split('/ ?: ?/', $pair);
-            echo "{$label}";
-            $isFillable = $isFillable != 1 || $isFillable != 0 ? 1 : $isFillable;
-            /*$arrayFields[$key] = $val;*/
-            $arrayFields[$key] = [$val, $label, $isFillable];
+        foreach ($fields as $fieldVal) {
+            $bits = preg_split('/ ?: ?/', $fieldVal);
+            /* isFillable */
+            $arrayFields[$bits[0]] = []; // 'name'=>array()
+            foreach ($bits as $bitKey => $bit) {
+                /* Check if afieldValue is 'name' or 'type' or from the additional */
+                if (substr($bit, 0, 1) == '&' || $bitKey == 1) {
+                    $bit = substr($bit, 0, 1) == '&' ? substr($bit, 1, strlen($bit)) : $bit;
+                    $arrayFields[$bits[0]][] = $bit;
+                }
+            }
         }
 
         return $this->file->put($path, json_encode($arrayFields));
