@@ -67,6 +67,22 @@ class ModelGenerator extends Generator
             PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $fillables) . PHP_EOL . "\t",
             $rules_);
 
+        /* Add tableIndexes */
+        if (!$iTableIndexes = $this->cache->getFields()) {
+            return str_replace('{{tableIndexes}}', '', $this->template);
+        }
+
+        $tableIndexes = [];
+        foreach ($iTableIndexes as $name => $fields) {
+            if ($fields[3] == 1) { /* $tableIndexes*/
+                $tableIndexes[] = "'$name'";
+            }
+        }
+
+        $tableIndexes_ = str_replace('{{tableIndexes}}',
+            PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $tableIndexes) . PHP_EOL . "\t",
+            $fillables_);
+
         /* Add labels */
         if (!$ilabels = $this->cache->getFields()) {
             return str_replace('{{labels}}', '', $this->template);
@@ -79,7 +95,7 @@ class ModelGenerator extends Generator
 
         $labels_ = str_replace('{{labels}}',
             PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $labels) . PHP_EOL . "\t",
-            $fillables_);
+            $tableIndexes_);
 
 
         /* Add relationships */
@@ -90,7 +106,14 @@ class ModelGenerator extends Generator
         $relationships = [];
         foreach ($irelationships as $name => $fields) {
             /* Start from the relationships */
-            for ($i = 3; $i < count($fields); $i++) {
+            /**
+             * 0. type
+             * 1. label
+             * 2. isFillable
+             * 3.
+             * 4. relationship
+             */
+            for ($i = 4; $i < count($fields); $i++) {
                 foreach (['hm', 'ho', 'btm', 'bt'] as $query) {
                     if (substr($fields[$i], 0, strlen($query)) === $query) {
                         /* Check what type of relationship and prepare function string*/

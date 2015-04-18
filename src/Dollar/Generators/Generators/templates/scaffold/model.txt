@@ -9,5 +9,7 @@ class {{className}} extends Eloquent {
 
 	public static $labels = array({{labels}});
 
+	public static $tableIndexes = array({{tableIndexes}});
+
 	{{relationships}}
 }
