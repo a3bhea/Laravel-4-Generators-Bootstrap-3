@@ -2,7 +2,8 @@
 
 use Illuminate\Filesystem\Filesystem as File;
 
-class Cache {
+class Cache
+{
 
     /**
      * Filesystem instance
@@ -45,16 +46,19 @@ class Cache {
      */
     public function fields($fields, $path = null)
     {
-        if (is_null($fields)) return;
+        if (is_null($fields))
+            return;
 
-        $path = $path ?: __DIR__.'/../tmp-fields.txt';
+        $path = $path ?: __DIR__ . '/../tmp-fields.txt';
         $fields = preg_split('/, ?/', $fields);
         $arrayFields = array();
 
-        foreach($fields as $pair)
-        {
-            list($key, $val) = preg_split('/ ?: ?/', $pair);
-            $arrayFields[$key] = $val;
+        foreach ($fields as $pair) {
+            list($key, $val, $label, $isFillable) = preg_split('/ ?: ?/', $pair);
+            echo "{$label}";
+            $isFillable = $isFillable != 1 || $isFillable != 0 ? 1 : $isFillable;
+            /*$arrayFields[$key] = $val;*/
+            $arrayFields[$key] = [$val, $label, $isFillable];
         }
 
         return $this->file->put($path, json_encode($arrayFields));
@@ -68,17 +72,15 @@ class Cache {
      */
     public function getFields($path = null)
     {
-        $path = $path ?:  __DIR__.'/../tmp-fields.txt';
+        $path = $path ?: __DIR__ . '/../tmp-fields.txt';
 
         // Have we already fetched the fields?
-        if (! is_null($this->fields))
-        {
+        if (!is_null($this->fields)) {
             return $this->fields;
         }
 
         // If not, let's grab it if it exists.
-        if (file_exists($path))
-        {
+        if (file_exists($path)) {
             return $this->fields = json_decode($this->file->get($path), true);
         }
 
@@ -98,7 +100,7 @@ class Cache {
      */
     public function modelName($modelName, $path = null)
     {
-        $path = $path ?: __DIR__.'/../tmp-model.txt';
+        $path = $path ?: __DIR__ . '/../tmp-model.txt';
 
         return $this->file->put($path, $modelName);
     }
@@ -111,17 +113,15 @@ class Cache {
      */
     public function getModelName($path = null)
     {
-        $path = $path ?: __DIR__.'/../tmp-model.txt';
+        $path = $path ?: __DIR__ . '/../tmp-model.txt';
 
         // Have we already fetched the model name?
-        if (! is_null($this->model))
-        {
+        if (!is_null($this->model)) {
             return $this->model;
         }
 
         // If not, let's grab it if it exists.
-        if (file_exists($path))
-        {
+        if (file_exists($path)) {
             return $this->model = $this->file->get($path);
         }
     }
@@ -133,8 +133,8 @@ class Cache {
      */
     public function destroyAll()
     {
-        unlink(__DIR__.'/../tmp-model.txt');
-        unlink(__DIR__.'/../tmp-fields.txt');
+        unlink(__DIR__ . '/../tmp-model.txt');
+        unlink(__DIR__ . '/../tmp-fields.txt');
     }
 
 }

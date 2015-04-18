@@ -118,7 +118,10 @@ EOT;
     {
         $formMethods = array();
 
-        foreach ($this->cache->getFields() as $name => $type) {
+        foreach ($this->cache->getFields() as $name => $field) {
+            $type = $field[0];
+            $label = $field[1];
+            $isFillable = $field = [2];
             $formalName = ucwords($name);
 
             // TODO: add remaining types
