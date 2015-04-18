@@ -121,7 +121,8 @@ EOT;
         foreach ($this->cache->getFields() as $name => $field) {
             $type = $field[0];
             $label = $field[1];
-            $isFillable = $field = [2];
+            $isFillable = $field[2];
+            $isTableIndex = $field[3];
             $formalName = ucwords($name);
 
             // TODO: add remaining types
