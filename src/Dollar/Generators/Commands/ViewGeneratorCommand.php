@@ -31,7 +31,7 @@ class ViewGeneratorCommand extends BaseGeneratorCommand {
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ViewGenerator $generator
      */
     public function __construct(ViewGenerator $generator)
     {
@@ -60,7 +60,7 @@ class ViewGeneratorCommand extends BaseGeneratorCommand {
     protected function getOptions()
     {
         return array(
-           array('path', null, InputOption::VALUE_OPTIONAL, 'Path to views directory.', app_path() . '/views'),
+           array('path', null, InputOption::VALUE_OPTIONAL, 'Path to views directory.', app_path() . '/views/admin'),
            array('template', null, InputOption::VALUE_OPTIONAL, 'Path to template.', __DIR__.'/../Generators/templates/view.txt'),
         );
     }

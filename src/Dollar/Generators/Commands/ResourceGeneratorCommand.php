@@ -1,15 +1,18 @@
 <?php namespace Dollar\Generators\Commands;
 
-use Dollar\Generators\Generators\ResourceGenerator;
 use Dollar\Generators\Cache;
+use Dollar\Generators\Generators\ResourceGenerator;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Support\Pluralizer;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
-class MissingFieldsException extends \Exception {}
+class MissingFieldsException extends \Exception
+{
+}
 
-class ResourceGeneratorCommand extends Command {
+class ResourceGeneratorCommand extends Command
+{
 
     /**
      * The console command name.
@@ -42,7 +45,8 @@ class ResourceGeneratorCommand extends Command {
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ResourceGenerator $generator
+     * @param Cache             $cache
      */
     public function __construct(ResourceGenerator $generator, Cache $cache)
     {
@@ -55,7 +59,7 @@ class ResourceGeneratorCommand extends Command {
     /**
      * Execute the console command.
      *
-     * @return void
+     * @throws MissingFieldsException
      */
     public function fire()
     {
@@ -65,8 +69,7 @@ class ResourceGeneratorCommand extends Command {
 
         $this->fields = $this->option('fields');
 
-        if (is_null($this->fields))
-        {
+        if (is_null($this->fields)) {
             throw new MissingFieldsException('You must specify the fields option.');
         }
 
@@ -82,8 +85,7 @@ class ResourceGeneratorCommand extends Command {
         $this->generateMigration();
         $this->generateSeed();
 
-        if (get_called_class() === 'Way\\Generators\\Commands\\ScaffoldGeneratorCommand')
-        {
+        if (get_called_class() === 'Way\\Generators\\Commands\\ScaffoldGeneratorCommand') {
             $this->generateTest();
         }
 
@@ -102,7 +104,7 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function getModelTemplatePath()
     {
-        return __DIR__.'/../Generators/templates/model.txt';
+        return __DIR__ . '/../Generators/templates/model.txt';
     }
 
     /**
@@ -112,7 +114,7 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function getControllerTemplatePath()
     {
-        return __DIR__.'/../Generators/templates/controller.txt';
+        return __DIR__ . '/../Generators/templates/controller.txt';
     }
 
     /**
@@ -122,7 +124,7 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function getViewTemplatePath($view = 'view')
     {
-        return __DIR__."/../Generators/templates/view.txt";
+        return __DIR__ . "/../Generators/templates/view.txt";
     }
 
     /**
@@ -133,13 +135,11 @@ class ResourceGeneratorCommand extends Command {
     protected function generateModel()
     {
         // For now, this is just the regular model template
-        $this->call(
-            'generate:model',
+        $this->call('generate:model',
             array(
-                'name' => $this->model,
+                'name'       => $this->model,
                 '--template' => $this->getModelTemplatePath()
-            )
-        );
+            ));
     }
 
     /**
@@ -147,17 +147,15 @@ class ResourceGeneratorCommand extends Command {
      *
      * @return void
      */
-   protected function generateController()
+    protected function generateController()
     {
         $name = Pluralizer::plural($this->model);
 
-        $this->call(
-            'generate:controller',
+        $this->call('generate:controller',
             array(
-                'name' => "{$name}Controller",
+                'name'       => "{$name}Controller",
                 '--template' => $this->getControllerTemplatePath()
-            )
-        );
+            ));
     }
 
     /**
@@ -167,19 +165,16 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function generateTest()
     {
-        if ( ! file_exists(app_path() . '/tests/controllers'))
-        {
+        if (!file_exists(app_path() . '/tests/controllers')) {
             mkdir(app_path() . '/tests/controllers');
         }
 
-        $this->call(
-            'generate:test',
+        $this->call('generate:test',
             array(
-                'name' => Pluralizer::plural(strtolower($this->model)) . 'Test',
+                'name'       => Pluralizer::plural(strtolower($this->model)) . 'Test',
                 '--template' => $this->getTestTemplatePath(),
-                '--path' => app_path() . '/tests/controllers'
-            )
-        );
+                '--path'     => app_path() . '/tests/controllers'
+            ));
     }
 
     /**
@@ -189,26 +184,22 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function generateViews()
     {
-        $viewsDir = app_path().'/views';
+        $viewsDir = app_path() . '/views/admin';
         $container = $viewsDir . '/' . Pluralizer::plural($this->model);
         $layouts = $viewsDir . '/layouts';
         $views = array('index', 'show', 'create', 'edit');
 
-        $this->generator->folders(
-            array($container)
-        );
+        $this->generator->folders(array($container));
 
         // If generating a scaffold, we also need views/layouts/scaffold
-        if (get_called_class() === 'Dollar\\Generators\\Commands\\ScaffoldGeneratorCommand')
-        {
+        if (get_called_class() === 'Dollar\\Generators\\Commands\\ScaffoldGeneratorCommand') {
             $views[] = 'scaffold';
             $this->generator->folders($layouts);
         }
 
         // Let's filter through all of our needed views
         // and create each one.
-        foreach($views as $view)
-        {
+        foreach ($views as $view) {
             $path = $view === 'scaffold' ? $layouts : $container;
             $this->generateView($view, $path);
         }
@@ -223,14 +214,12 @@ class ResourceGeneratorCommand extends Command {
      */
     protected function generateView($view, $path)
     {
-        $this->call(
-            'generate:view',
+        $this->call('generate:view',
             array(
                 'name'       => $view,
                 '--path'     => $path,
                 '--template' => $this->getViewTemplatePath($view)
-            )
-        );
+            ));
     }
 
     /**
@@ -242,23 +231,19 @@ class ResourceGeneratorCommand extends Command {
     {
         $name = 'create_' . Pluralizer::plural($this->model) . '_table';
 
-        $this->call(
-            'generate:migration',
+        $this->call('generate:migration',
             array(
-                'name'      => $name,
-                '--fields'  => $this->option('fields')
-            )
-        );
+                'name'     => $name,
+                '--fields' => $this->option('fields')
+            ));
     }
 
     protected function generateSeed()
     {
-        $this->call(
-            'generate:seed',
+        $this->call('generate:seed',
             array(
                 'name' => Pluralizer::plural(strtolower($this->model))
-            )
-        );
+            ));
     }
 
     /**
@@ -281,7 +266,13 @@ class ResourceGeneratorCommand extends Command {
     protected function getOptions()
     {
         return array(
-            array('path', null, InputOption::VALUE_OPTIONAL, 'The path to the migrations folder', app_path() . '/database/migrations'),
+            array(
+                'path',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The path to the migrations folder',
+                app_path() . '/database/migrations'
+            ),
             array('fields', null, InputOption::VALUE_OPTIONAL, 'Table fields', null)
         );
     }

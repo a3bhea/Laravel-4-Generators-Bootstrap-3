@@ -101,7 +101,7 @@ EOT;
 
         $showLink = <<<EOT
 <td>
-{{link_to_route('admin.{$models}.show', \${$model}->id, array(\${$model}->id)}}
+{{link_to_route('admin.{$models}.show', \${$model}->id, array(\${$model}->id))}}
 </td>
 EOT;
 

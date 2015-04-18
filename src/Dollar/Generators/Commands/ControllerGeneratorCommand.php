@@ -2,10 +2,11 @@
 
 use Dollar\Generators\Generators\ControllerGenerator;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
-class ControllerGeneratorCommand extends BaseGeneratorCommand {
+class ControllerGeneratorCommand extends BaseGeneratorCommand
+{
 
     /**
      * The console command name.
@@ -31,7 +32,7 @@ class ControllerGeneratorCommand extends BaseGeneratorCommand {
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ControllerGenerator $generator
      */
     public function __construct(ControllerGenerator $generator)
     {
@@ -47,7 +48,7 @@ class ControllerGeneratorCommand extends BaseGeneratorCommand {
      */
     protected function getPath()
     {
-       return $this->option('path') . '/' . ucwords($this->argument('name')) . '.php';
+        return $this->option('path') . '/' . ucwords($this->argument('name')) . '.php';
     }
 
     /**
@@ -70,8 +71,20 @@ class ControllerGeneratorCommand extends BaseGeneratorCommand {
     protected function getOptions()
     {
         return array(
-           array('path', null, InputOption::VALUE_OPTIONAL, 'Path to controllers directory.', app_path() . '/controllers'),
-           array('template', null, InputOption::VALUE_OPTIONAL, 'Path to template.', __DIR__.'/../Generators/templates/controller.txt'),
+            array(
+                'path',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Path to controllers directory.',
+                app_path() . '/controllers/admin'
+            ),
+            array(
+                'template',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Path to template.',
+                __DIR__ . '/../Generators/templates/controller.txt'
+            ),
         );
     }
 
