@@ -115,11 +115,11 @@ EOT;
             switch($type)
             {
                 case 'integer':
-                   $element = "{{ Form::input('number', '$name', Input::old('$name'), array('class'=>'form-control')) }}";
+                   $element = "{{ Form::input('number', '$name', isset(Input::old('$name')) ? Input::old('$name') : createFaker()->randomNumber(), array('class'=>'form-control')) }}";
                     break;
 
                 case 'text':
-                    $element = "{{ Form::textarea('$name', Input::old('$name'), array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
+                    $element = "{{ Form::textarea('$name', isset(Input::old('$name')) ? Input::old('$name') : createFaker()->realText(), array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
                     break;
 
                 case 'boolean':
@@ -127,7 +127,7 @@ EOT;
                     break;
 
                 default:
-                    $element = "{{ Form::text('$name', Input::old('$name'), array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
+                    $element = "{{ Form::text('$name',  isset(Input::old('$name')) ? Input::old('$name') : createFaker()->name, array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
                     break;
             }
 
