@@ -127,7 +127,7 @@ EOT;
             // TODO: add remaining types
             switch ($type) {
                 case 'integer':
-                    $element = "{{ Form::input('number', '$name', Input::old('$name') ? Input::old('$name') : createFaker()->randomNumber(), array('class'=>'form-control')) }}";
+                    $element = "{{ Form::number('$name', Input::old('$name') ? Input::old('$name') : createFaker()->randomNumber(), array('class'=>'form-control')) }}";
                     break;
 
                 case 'text':
@@ -147,7 +147,7 @@ EOT;
             // We can build up the HTML fragment
             $frag = <<<EOT
         <div class="form-group">
-            {{ Form::label('$name', '$formalName:', array('class'=>'col-md-2 control-label')) }}
+            {{ Form::label('$name', '$label:', array('class'=>'col-md-2 control-label')) }}
             <div class="col-sm-10">
               $element
             </div>
