@@ -58,8 +58,6 @@ class ModelGenerator extends Generator
 
         $fillables = [];
         foreach ($ifillables as $name => $fields) {
-            s($name);
-            s($fields);
             if ($fields[2] == 1 /* $isFillable */) {
                 $fillables[] = "'$name'";
             }
@@ -93,7 +91,7 @@ class ModelGenerator extends Generator
         foreach ($irelationships as $name => $fields) {
             /* Start from the relationships */
             for ($i = 3; $i < count($fields); $i++) {
-                foreach (['hm', 'ho', 'btm'] as $query) {
+                foreach (['hm', 'ho', 'btm', 'bt'] as $query) {
                     if (substr($fields[$i], 0, strlen($query)) === $query) {
                         /* Check what type of relationship and prepare function string*/
                         $relModel = explode(' ', $fields[$i]);
@@ -118,7 +116,20 @@ EOT;
 EOT;
                                 break;
                             case 'btm':
-                                $functionString = '';
+                                $functionString = <<<EOT
+    public function {$lcRelModelClass}()
+    {
+        return \$this->belongsToMany('{$relModelClass}');
+    }
+EOT;
+                                break;
+                            case 'bt':
+                                $functionString = <<<EOT
+    public function {$lcRelModelClass}()
+    {
+        return \$this->belongsTo('{$relModelClass}');
+    }
+EOT;
                                 break;
                         }
                         $relationships[] = $functionString;
