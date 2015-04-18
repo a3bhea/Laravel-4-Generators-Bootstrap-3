@@ -51,8 +51,6 @@ class ModelGenerator extends Generator
             PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $rules) . PHP_EOL . "\t",
             $this->template);
 
-        //        return $rules_;
-
         /* Add fillables */
         if (!$ifillables = $this->cache->getFields()) {
             return str_replace('{{fillables}}', '', $this->template);
@@ -70,8 +68,20 @@ class ModelGenerator extends Generator
             $rules_);
 
         /* Add labels */
+        if (!$ilabels = $this->cache->getFields()) {
+            return str_replace('{{labels}}', '', $this->template);
+        }
 
-        return $fillables_;
+        $labels = [];
+        foreach ($ilabels as $name => $fields) {
+            $labels[] = "'$name'=>'$fields[1]'";
+        }
+
+        $labels_ = str_replace('{{labels}}',
+            PHP_EOL . "\t\t" . implode(',' . PHP_EOL . "\t\t", $labels) . PHP_EOL . "\t",
+            $fillables_);
+
+        return $labels_;
     }
 
 }
