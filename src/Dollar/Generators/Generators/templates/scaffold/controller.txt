@@ -1,6 +1,6 @@
 <?php
 
-class {{className}} extends BaseController {
+class {{className}} extends AdminController {
 
 	/**
 	 * {{Model}} Repository
@@ -23,7 +23,7 @@ class {{className}} extends BaseController {
 	{
 		${{models}} = $this->{{model}}->all();
 
-		return View::make('{{models}}.index', compact('{{models}}'));
+		return View::make('admin.{{models}}.index', compact('{{models}}'));
 	}
 
 	/**
@@ -33,7 +33,7 @@ class {{className}} extends BaseController {
 	 */
 	public function create()
 	{
-		return View::make('{{models}}.create');
+		return View::make('admin.{{models}}.create');
 	}
 
 	/**
@@ -50,10 +50,10 @@ class {{className}} extends BaseController {
 		{
 			$this->{{model}}->create($input);
 
-			return Redirect::route('{{models}}.index');
+			return Redirect::route('admin.{{models}}.index');
 		}
 
-		return Redirect::route('{{models}}.create')
+		return Redirect::route('admin.{{models}}.create')
 			->withInput()
 			->withErrors($validation)
 			->with('message', 'There were validation errors.');
@@ -69,7 +69,7 @@ class {{className}} extends BaseController {
 	{
 		${{model}} = $this->{{model}}->findOrFail($id);
 
-		return View::make('{{models}}.show', compact('{{model}}'));
+		return View::make('admin.{{models}}.show', compact('{{model}}'));
 	}
 
 	/**
@@ -84,10 +84,10 @@ class {{className}} extends BaseController {
 
 		if (is_null(${{model}}))
 		{
-			return Redirect::route('{{models}}.index');
+			return Redirect::route('admin.{{models}}.index');
 		}
 
-		return View::make('{{models}}.edit', compact('{{model}}'));
+		return View::make('admin.{{models}}.edit', compact('{{model}}'));
 	}
 
 	/**
@@ -106,7 +106,7 @@ class {{className}} extends BaseController {
 			${{model}} = $this->{{model}}->find($id);
 			${{model}}->update($input);
 
-			return Redirect::route('{{models}}.show', $id);
+			return Redirect::route('admin.{{models}}.show', $id);
 		}
 
 		return Redirect::route('{{models}}.edit', $id)
@@ -125,7 +125,7 @@ class {{className}} extends BaseController {
 	{
 		$this->{{model}}->find($id)->delete();
 
-		return Redirect::route('{{models}}.index');
+		return Redirect::route('admin.{{models}}.index');
 	}
 
 }

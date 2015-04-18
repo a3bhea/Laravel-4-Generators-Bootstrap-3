@@ -1,10 +1,10 @@
-@extends('layouts.scaffold')
+@extends('admin.layouts.default')
 
-@section('main')
+@section('content')
 
 <h1>Show {{Model}}</h1>
 
-<p>{{ link_to_route('{{models}}.index', 'Return to All {{models}}', null, array('class'=>'btn btn-lg btn-primary')) }}</p>
+<p>{{ link_to_route('admin.{{models}}.index', 'Return to All {{models}}', null, array('class'=>'btn btn-lg btn-primary')) }}</p>
 
 <table class="table table-striped">
 	<thead>

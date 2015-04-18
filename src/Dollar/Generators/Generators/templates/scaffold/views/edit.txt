@@ -1,6 +1,6 @@
-@extends('layouts.scaffold')
+@extends('admin.layouts.default')
 
-@section('main')
+@section('content')
 
 <div class="row">
     <div class="col-md-10 col-md-offset-2">
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-{{ Form::model(${{model}}, array('class' => 'form-horizontal', 'method' => 'PATCH', 'route' => array('{{models}}.update', ${{model}}->id))) }}
+{{ Form::model(${{model}}, array('class' => 'form-horizontal', 'method' => 'PATCH', 'route' => array('admin.{{models}}.update', ${{model}}->id))) }}
 
 {{formElements}}
 
@@ -24,7 +24,7 @@
     <label class="col-sm-2 control-label">&nbsp;</label>
     <div class="col-sm-10">
       {{ Form::submit('Update', array('class' => 'btn btn-lg btn-primary')) }}
-      {{ link_to_route('{{models}}.show', 'Cancel', ${{model}}->id, array('class' => 'btn btn-lg btn-default')) }}
+      {{ link_to_route('admin.{{models}}.show', 'Cancel', ${{model}}->id, array('class' => 'btn btn-lg btn-default')) }}
     </div>
 </div>
 

@@ -1,6 +1,6 @@
-@extends('layouts.scaffold')
+@extends('admin.layouts.default')
 
-@section('main')
+@section('content')
 
 <div class="row">
     <div class="col-md-10 col-md-offset-2">
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-{{ Form::open(array('route' => '{{models}}.store', 'class' => 'form-horizontal')) }}
+{{ Form::open(array('route' => 'admin.{{models}}.store', 'class' => 'form-horizontal')) }}
 
 {{formElements}}
 

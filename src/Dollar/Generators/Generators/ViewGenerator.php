@@ -4,7 +4,8 @@ namespace Dollar\Generators\Generators;
 
 use Illuminate\Support\Pluralizer;
 
-class ViewGenerator extends Generator {
+class ViewGenerator extends Generator
+{
 
     /**
      * Fetch the compiled template for a view
@@ -17,8 +18,7 @@ class ViewGenerator extends Generator {
     {
         $this->template = $this->file->get($template);
 
-        if ($this->needsScaffolding($template))
-        {
+        if ($this->needsScaffolding($template)) {
             return $this->getScaffoldedTemplate($name);
         }
 
@@ -41,23 +41,26 @@ class ViewGenerator extends Generator {
         $Model = Pluralizer::singular($Models); // Post
 
         // Create and Edit views require form elements
-        if ($name === 'create.blade' or $name === 'edit.blade')
-        {
+        if ($name === 'create.blade' or $name === 'edit.blade') {
             $formElements = $this->makeFormElements();
 
             $this->template = str_replace('{{formElements}}', $formElements, $this->template);
         }
 
         // Replace template vars in view
-        foreach(array('model', 'models', 'Models', 'Model') as $var)
-        {
-            $this->template = str_replace('{{'.$var.'}}', $$var, $this->template);
+        foreach (array('model', 'models', 'Models', 'Model') as $var) {
+            $this->template = str_replace('{{' . $var . '}}', $$var, $this->template);
         }
 
         // And finally create the table rows
-        list($headings, $fields, $editAndDeleteLinks) = $this->makeTableRows($model);
-        $this->template = str_replace('{{headings}}', implode(PHP_EOL."\t\t\t\t", $headings), $this->template);
-        $this->template = str_replace('{{fields}}', implode(PHP_EOL."\t\t\t\t\t", $fields) . PHP_EOL . $editAndDeleteLinks, $this->template);
+        list($headings, $fields, $editAndDeleteLinks, $showLink) = $this->makeTableRows($model);
+        $this->template = str_replace('{{headings}}',
+            '<th></th>' . implode(PHP_EOL . "\t\t\t\t", $headings),
+            $this->template);
+        $this->template = str_replace('{{fields}}',
+            PHP_EOL . $showLink . implode(PHP_EOL . "\t\t\t\t\t",
+                $fields) . PHP_EOL . $editAndDeleteLinks,
+            $this->template);
 
         return $this->template;
     }
@@ -75,26 +78,34 @@ class ViewGenerator extends Generator {
         $fields = $this->cache->getFields();
 
         // First, we build the table headings
-        $headings = array_map(function($field) {
+        $headings = array_map(function ($field) {
             return '<th>' . ucwords($field) . '</th>';
-        }, array_keys($fields));
+        },
+            array_keys($fields));
 
         // And then the rows, themselves
-        $fields = array_map(function($field) use ($model) {
+        $fields = array_map(function ($field) use ($model) {
             return "<td>{{{ \$$model->$field }}}</td>";
-        }, array_keys($fields));
+        },
+            array_keys($fields));
 
         // Now, we'll add the edit and delete buttons.
         $editAndDelete = <<<EOT
                     <td>
-                        {{ Form::open(array('style' => 'display: inline-block;', 'method' => 'DELETE', 'route' => array('{$models}.destroy', \${$model}->id))) }}
+                        {{ Form::open(array('style' => 'display: inline-block;', 'method' => 'DELETE', 'route' => array('admin.{$models}.destroy', \${$model}->id))) }}
                             {{ Form::submit('Delete', array('class' => 'btn btn-danger')) }}
                         {{ Form::close() }}
-                        {{ link_to_route('{$models}.edit', 'Edit', array(\${$model}->id), array('class' => 'btn btn-info')) }}
+                        {{ link_to_route('admin.{$models}.edit', 'Edit', array(\${$model}->id), array('class' => 'btn btn-info')) }}
                     </td>
 EOT;
 
-        return array($headings, $fields, $editAndDelete);
+        $showLink = <<<EOT
+<td>
+{{link_to_route('admin.{$models}.show', \${$model}->id, array(\${$model}->id)}}
+</td>
+EOT;
+
+        return array($headings, $fields, $editAndDelete, $showLink);
     }
 
     /**
@@ -107,19 +118,17 @@ EOT;
     {
         $formMethods = array();
 
-        foreach($this->cache->getFields() as $name => $type)
-        {
+        foreach ($this->cache->getFields() as $name => $type) {
             $formalName = ucwords($name);
 
             // TODO: add remaining types
-            switch($type)
-            {
+            switch ($type) {
                 case 'integer':
-                   $element = "{{ Form::input('number', '$name', isset(Input::old('$name')) ? Input::old('$name') : createFaker()->randomNumber(), array('class'=>'form-control')) }}";
+                    $element = "{{ Form::input('number', '$name', Input::old('$name') ? Input::old('$name') : createFaker()->randomNumber(), array('class'=>'form-control')) }}";
                     break;
 
                 case 'text':
-                    $element = "{{ Form::textarea('$name', isset(Input::old('$name')) ? Input::old('$name') : createFaker()->realText(), array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
+                    $element = "{{ Form::textarea('$name', Input::old('$name') ? Input::old('$name') : createFaker()->realText(), array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
                     break;
 
                 case 'boolean':
@@ -127,7 +136,7 @@ EOT;
                     break;
 
                 default:
-                    $element = "{{ Form::text('$name',  isset(Input::old('$name')) ? Input::old('$name') : createFaker()->name, array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
+                    $element = "{{ Form::text('$name',  Input::old('$name') ? Input::old('$name') : createFaker()->name, array('class'=>'form-control', 'placeholder'=>'$formalName')) }}";
                     break;
             }
 

@@ -11,8 +11,9 @@ class ControllerGenerator extends Generator {
      * Fetch the compiled template for a controller
      *
      * @param  string $template Path to template
-     * @param  string $name
+     * @param Name    $className
      * @return string Compiled template
+     * @internal param string $name
      */
     protected function getTemplate($template, $className)
     {
@@ -35,8 +36,9 @@ class ControllerGenerator extends Generator {
      * Get template for a scaffold
      *
      * @param  string $template Path to template
-     * @param  string $name
+     * @param         $className
      * @return string
+     * @internal param string $name
      */
     protected function getScaffoldedController($template, $className)
     {

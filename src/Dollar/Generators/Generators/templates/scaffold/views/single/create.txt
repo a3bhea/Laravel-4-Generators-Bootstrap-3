@@ -2,7 +2,7 @@
 
 <h1>Create {{Model}}</h1>
 
-{{ Form::open(['route' => '{{models}}.store']) }}
+{{ Form::open(['route' => 'admin.{{models}}.store']) }}
 	<ul>
 {{formElements}}
 		<li>
