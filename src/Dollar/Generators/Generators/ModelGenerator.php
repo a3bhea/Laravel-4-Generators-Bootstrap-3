@@ -134,9 +134,6 @@ EOT;
                         }
                         $relationships[] = $functionString;
                     }
-                    else {
-
-                    }
                 }
             }
         }

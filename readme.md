@@ -1,3 +1,19 @@
+### Scaffolding updated to support Field labels, Fillables and Relationships
+Usage:
+
+    php artisan generate:scaffold [model_name] --fields="[fieldName]:[fieldType]:&[field Label]:&[isFillable]:&[relationshipType] [RelatedModelName]:&[relationshipType] [RelatedModelName]"
+    
+Format:
+    
+    model_name  -   (string)    The name of your model
+    fieldName   -   (string)    Name of the field
+    fieldType   -   (string)    Supported Laravel table field type (check laravel documentation)
+    fieldLabel  -   (string)    The label of the field (this is going to be shown on forms, and talbes)
+    isFillable  -   (integer)   1 or 0 (if 1, field is added to fillables array in Model)
+    relationshipType    -   (string)    `ha` for hasMany, `ho` for hasOne, `btm` for belongsToMany, `bt` for belongsTo
+    RelatedModelName    -   (string)    The name of the related model, example: Post
+    
+    
 ### Forked from JeffreyWay/Laravel-4-Generators.
 
 This package updates the views provided by Jeffrey Way's original works to Bootstrap 3. The original documentation from Way's works follows. The instructions have been updated to reflect any changes within this package.
