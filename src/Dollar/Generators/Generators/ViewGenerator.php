@@ -79,7 +79,11 @@ class ViewGenerator extends Generator
 
         // First, we build the table headings
         $headings = array_map(function ($field) {
-            return '<th>' . ucwords($field) . '</th>';
+            /* If field[3]==1*/
+            if ($field[3] == 1) {
+                return '<th>' . ucwords($field) . '</th>';
+            }
+            return '';
         },
             array_keys($fields));
 
